@@ -430,7 +430,7 @@ class RelationshipProvider
      * @param RegistryObject $record
      * @return array
      */
-    public static function getDirectRelationship(RegistryObject $record,)
+    public static function getDirectRelationship(RegistryObject $record)
     {
         // TODO: use Connections Provider to get these data
         $provider = Connections::getStandardProvider();
