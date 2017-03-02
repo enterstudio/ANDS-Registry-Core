@@ -69,7 +69,7 @@ class RelationshipProvider
      * @param RegistryObject $record
      * @return array
      */
-    public static function getMergedRelationships(RegistryObject $record)
+    public static function getMergedRelationships(RegistryObject $record, $includeDuplicates = true)
     {
         $allRelationships = static::get($record);
         $allRelationships = collect($allRelationships)->flatten(1)->values()->all();
