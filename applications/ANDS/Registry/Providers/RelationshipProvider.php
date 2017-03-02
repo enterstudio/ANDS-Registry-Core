@@ -84,7 +84,10 @@ class RelationshipProvider
                 $result[$key] = $relation;
             }
         }
-        return $result;
+
+        if ($includeDuplicates != true) {
+            return $result;
+        }
 
         // duplicates
        $duplicates = $record->getDuplicateRecords();
@@ -378,8 +381,12 @@ class RelationshipProvider
     {
         $provider = GrantsConnectionsProvider::create();
 
-        // find funder and saved it, getFunder is recursive by default
+        // skip getting funder if this node is a party or a service
+        if ($record->class == "party" || $record->class == "service") {
+            return;
+        }
 
+        // find funder and saved it, getFunder is recursive by default
         if ($funder = $provider->getFunder($record)) {
             ImplicitRelationship::firstOrCreate([
                 'from_id' => $record->registry_object_id,
@@ -389,21 +396,9 @@ class RelationshipProvider
             ]);
         }
 
-        // find all parents collections
 
-        if ($collections = $provider->getParentsCollections($record)) {
-            foreach ($collections as $collection) {
-                ImplicitRelationship::firstOrCreate([
-                    'from_id' => $record->registry_object_id,
-                    'to_id' => $collection->registry_object_id,
-                    'relation_type' => 'isPartOf',
-                    'relation_origin' => 'GRANTS'
-                ]);
-            }
-        }
 
         // find all parents activities
-
         if ($activities = $provider->getParentsActivities($record)) {
             foreach ($activities as $activity) {
 
@@ -416,6 +411,23 @@ class RelationshipProvider
                     'from_id' => $record->registry_object_id,
                     'to_id' => $activity->registry_object_id,
                     'relation_type' => $relationType,
+                    'relation_origin' => 'GRANTS'
+                ]);
+            }
+        }
+
+        // skip getting parent collections if it's an activity
+        if ($record->class == "activity") {
+            return;
+        }
+
+        // find all parents collections
+        if ($collections = $provider->getParentsCollections($record)) {
+            foreach ($collections as $collection) {
+                ImplicitRelationship::firstOrCreate([
+                    'from_id' => $record->registry_object_id,
+                    'to_id' => $collection->registry_object_id,
+                    'relation_type' => 'isPartOf',
                     'relation_origin' => 'GRANTS'
                 ]);
             }
