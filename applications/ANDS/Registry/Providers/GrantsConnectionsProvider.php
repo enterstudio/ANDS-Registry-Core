@@ -363,7 +363,7 @@ class GrantsConnectionsProvider extends Connections
         foreach ($activities as $parentActivity) {
             $grandParents = $this->getParentsActivities($parentActivity);
 
-            if ($grantParents && $grandParents->count() > 0) {
+            if (count($grandParents) > 0) {
                 $activities = collect($activities)->merge($grandParents);
             }
         }
