@@ -132,19 +132,15 @@ class ProcessDelete extends ImportSubTask
         $chunks = collect($ids)->chunk(300)->toArray();
         foreach ($chunks as $chunk) {
 
-            $portal = collect($chunk)->map(function($item) {
-                return ' id:'.$item;
-            })->collapse()->toArray();
-            $portalQuery = implode(' ', $portal);
+            $portalQuery = collect($chunk)->map(function($id) {
+                return ' id:'.$id;
+            })->implode(' ');
 
-            $relation = collect($chunk)->map(function($item) {
-                return ' from_id:'.$item. ' to_id'. $item;
-            })->collapse()->toArray();
-
-            $relationsQuery = implode(' ', $portal);
+            $relationsQuery = collect($chunk)->map(function($id) {
+                return ' from_id:'.$id. ' to_id:'. $id;
+            })->implode(' ');
 
             // delete from the solr index
-
             $result = $this->parent()->getCI()->solr->init()
                 ->setCore('portal')
                 ->deleteByQueryCondition($portalQuery);
@@ -156,13 +152,12 @@ class ProcessDelete extends ImportSubTask
 
             $result = $this->parent()->getCI()->solr->init()
                 ->setCore('relations')
-                ->deleteByQueryCondition($portalQuery);
+                ->deleteByQueryCondition($relationsQuery);
 
             $result = json_decode($result, true);
             if (array_key_exists('error', $result)) {
                 $this->addError("unindexing failed ". $result['error']['msg']);
             }
-
         }
 
         $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
