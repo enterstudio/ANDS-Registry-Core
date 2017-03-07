@@ -99,6 +99,7 @@ class IndexRelationship extends ImportSubTask
             }
 
             $relationType = is_array($rel['relation_type']) ? $rel['relation_type'] : [$rel['relation_type']];
+            $relationType = collect($relationType)->flatten()->toArray();
             $updateDoc["related_".$class."_id"][] = $rel['to_id'];
             $updateDoc["related_".$class."_title"][] = $rel['to_title'];
             foreach ($relationType as $type) {
