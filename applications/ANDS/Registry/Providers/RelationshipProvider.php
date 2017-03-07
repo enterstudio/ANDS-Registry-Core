@@ -103,7 +103,7 @@ class RelationshipProvider
            foreach ($allRelationships as $relation) {
 
                $swappedRelation = $relation->switchFromRecord($record);
-               $key = $relation->getUniqueID();
+               $key = $swappedRelation->getUniqueID();
 
                if (array_key_exists($key, $result)) {
                    $result[$key]->mergeWith( $swappedRelation->getProperties());
