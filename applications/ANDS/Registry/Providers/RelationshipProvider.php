@@ -85,6 +85,23 @@ class RelationshipProvider
             }
         }
 
+        // duplicate of the related
+       $currentResult = $result;
+       foreach ($currentResult as $key=>$related) {
+            if ($to = $related->to()) {
+                $duplicates = $to->getDuplicateRecords();
+                foreach ($duplicates as $duplicate) {
+                    $swappedRelation = $related->switchToRecord($duplicate);
+                    $swappedKey = $swappedRelation->getUniqueID();
+                    if (array_key_exists($swappedKey, $result)) {
+                        $result[$swappedKey]->mergeWith( $swappedRelation->getProperties());
+                    } else {
+                        $result[$swappedKey] =  $swappedRelation;
+                    }
+                }
+            }
+       }
+
         if ($includeDuplicates != true) {
             return $result;
         }
@@ -92,7 +109,7 @@ class RelationshipProvider
         // duplicates
        $duplicates = $record->getDuplicateRecords();
 
-       if(count($duplicates) == 0) {
+       if (count($duplicates) == 0) {
            return $result;
        }
 
@@ -112,6 +129,8 @@ class RelationshipProvider
                }
            }
        }
+
+
 
        return $result;
     }

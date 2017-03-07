@@ -37,6 +37,13 @@ class TestIndexRelationshipTask extends UnitTest
     }
 
     /** @test **/
+    public function test_it_should_try()
+    {
+        $record = RegistryObject::find(590007);
+        dd(RelationshipProvider::getMergedRelationships($record));
+    }
+
+    /** @test **/
     public function test_it_should_sample()
     {
 
