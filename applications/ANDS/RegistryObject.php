@@ -28,6 +28,17 @@ class RegistryObject extends Model
     }
 
     /**
+     * Eloquent Accessor
+     * usage: $this->id will return $this->registry_object_id
+     *
+     * @return mixed
+     */
+    public function getIdAttribute()
+    {
+        return $this->registry_object_id;
+    }
+
+    /**
      * Eloquent
      * Returns a current recordData
      *
@@ -75,7 +86,7 @@ class RegistryObject extends Model
         RegistryObjectAttribute::where('attribute', $key)
             ->where('registry_object_id', $this->registry_object_id)->delete();
     }
-    
+
     /**
      * Get a RegistryObjectAttribute of this by key
      *

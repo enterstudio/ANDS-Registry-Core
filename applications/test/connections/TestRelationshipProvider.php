@@ -43,6 +43,31 @@ class TestRelationshipProvider extends UnitTest
 //        var_dump($relationships);
 //        // TODO
 //    }
+//
+    /** @test **/
+    public function test_it_should_get_the_funder()
+    {
+        initEloquent();
+        restore_error_handler();
+        restore_exception_handler();
+        $provider = GrantsConnectionsProvider::create();
+
+        $collection = RegistryObjectsRepository::getRecordByID(1017479);
+
+        RelationshipProvider::processGrantsRelationship($collection);
+
+
+        // $activity = RegistryObjectsRepository::getRecordByID(1017477);
+        // $activity = RegistryObjectsRepository::getRecordByID(1017473);
+        // $activity = RegistryObjectsRepository::getRecordByID(1017475);
+        // $funder = $provider->getFunder($collection);
+
+        RelationshipProvider::processGrantsRelationship($collection);
+        $parentActivities = $provider->getParentsActivities($collection);
+        var_dump('end');
+        dd($parentActivities);
+
+    }
 
 
     /** @test **/
